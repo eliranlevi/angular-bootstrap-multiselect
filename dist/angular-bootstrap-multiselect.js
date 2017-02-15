@@ -10,10 +10,10 @@
             } else {
                 return null;
             }
-        }, object)
+        }, object);
     };
 
-    multiselect.directive('multiselect', ['$filter', '$document', '$log', function ($filter, $document, $log) {
+    multiselect.directive('multiselect', ['$filter', '$document', '$log', '$rootScope', function ($filter, $document, $log, $rootScope) {
         return {
             restrict: 'AE',
             scope: {
@@ -26,25 +26,25 @@
                 showUnselectAll: '=?',
                 showSearch: '=?',
                 searchFilter: '=?',
-                disabled: '=?ngDisabled',
-                defaultText: '@'
+                selectNamePl: '=',
+                selectListen: '=',
+                filterFunc: "&?",
+                disabled: '=?ngDisabled'
             },
             require: 'ngModel',
             templateUrl: 'multiselect.html',
             link: function ($scope, $element, $attrs, $ngModelCtrl) {
                 $scope.selectionLimit = $scope.selectionLimit || 0;
                 $scope.searchLimit = $scope.searchLimit || 25;
-                $scope.defaultText = $scope.defaultText || 'Select';
 
                 $scope.searchFilter = '';
 
-                $scope.resolvedOptions = [];
-                if (typeof $scope.options !== 'function') {
-                    $scope.resolvedOptions = $scope.options;
-                }
-
                 if (typeof $attrs.disabled != 'undefined') {
                     $scope.disabled = true;
+                }
+
+                if ($scope.selectListen) {
+                    $rootScope.$on(`${$scope.selectListen}.update`, handler);
                 }
 
                 $scope.toggleDropdown = function () {
@@ -66,7 +66,7 @@
                         if ($scope.selectedOptions) {
                             $scope.selectedOptions = [];
                         }
-                        $scope.unselectedOptions = $scope.resolvedOptions.slice(); // Take a copy
+                        $scope.unselectedOptions = angular.copy($scope.resolvedOptions);
                     } else {
                         $scope.selectedOptions = $scope.resolvedOptions.filter(function (el) {
                             var id = $scope.getId(el);
@@ -119,12 +119,12 @@
                         var totalSelected;
                         totalSelected = angular.isDefined($scope.selectedOptions) ? $scope.selectedOptions.length : 0;
                         if (totalSelected === 0) {
-                            return $scope.defaultText;
+                            return `כל ה${$scope.selectNamePl} (או לחץ לבחירה)`;
                         } else {
-                            return totalSelected + ' ' + 'selected';
+                            return totalSelected + ` ${$scope.selectNamePl} ` + 'נבחרו';
                         }
                     } else {
-                        return $scope.defaultText;
+                        return `כל ה${$scope.selectNamePl} (או לחץ לבחירה)`;
                     }
                 };
 
@@ -139,6 +139,7 @@
                 };
 
                 $scope.toggleItem = function (item) {
+                    $scope.searchFilter = '';
                     if (typeof $scope.selectedOptions === 'undefined') {
                         $scope.selectedOptions = [];
                     }
@@ -152,6 +153,8 @@
                         $scope.unselectedOptions.splice(unselectedIndex, 1);
                         $scope.selectedOptions.push(item);
                     }
+
+                    $rootScope.$broadcast(`${$attrs.ngModel}.update`);
                 };
 
                 $scope.getId = function (item) {
@@ -227,6 +230,20 @@
                     }
                 };
 
+                $scope.resolvedOptions = [];
+                if (typeof $scope.options !== 'function') {
+                    $scope.resolvedOptions = $scope.options;
+                } else {
+                    $scope.updateOptions();
+                }
+
+                function handler() {
+                    removeSelection();
+                }
+
+                function removeSelection() {
+                    $scope.selectedOptions = [];
+                }
             }
         };
     }]);
@@ -239,7 +256,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
   $templateCache.put("multiselect.html",
     "<div class=\"btn-group\" style=\"width: 100%\">\n" +
     "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
-    "        {{getButtonText()}}&nbsp;<span class=\"caret\"></span>\n" +
+    "        {{getButtonText()}}&nbsp;\n" +
     "    </button>\n" +
     "    <ul class=\"dropdown-menu dropdown-menu-form\"\n" +
     "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
@@ -258,23 +275,23 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "            class=\"divider\">\n" +
     "        </li>\n" +
     "\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions\" class=\"active\">\n" +
-    "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
-    "                <span class=\"glyphicon glyphicon-remove\"></span>\n" +
-    "                {{getDisplay(option)}}\n" +
-    "            </a>\n" +
-    "        </li>\n" +
-    "        <li ng-show=\"selectedOptions.length > 0\" class=\"divider\"></li>\n" +
     "\n" +
     "        <li ng-show=\"showSearch\">\n" +
     "            <div class=\"dropdown-header\">\n" +
     "                <input type=\"text\" class=\"form-control input-sm\" style=\"width: 100%;\"\n" +
-    "                       ng-model=\"searchFilter\" placeholder=\"Search...\" ng-change=\"updateOptions()\"/>\n" +
+    "                       ng-model=\"searchFilter\" placeholder=\"חפש...\" ng-change=\"updateOptions()\"/>\n" +
     "            </div>\n" +
     "        </li>\n" +
     "\n" +
-    "        <li ng-show=\"showSearch\" class=\"divider\"></li>\n" +
-    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter:search() | limitTo: searchLimit\"\n" +
+    "        <li ng-show=\"showSearch\" class=\"divider search-divider\"></li>\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions\" class=\"active\">\n" +
+    "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
+    "                <span class=\"fa fa-times-circle\"></span>\n" +
+    "                {{getDisplay(option)}}\n" +
+    "            </a>\n" +
+    "        </li>\n" +
+    "        <li ng-show=\"selectedOptions.length > 0\" class=\"divider\"></li>\n" +
+    "        <li role=\"presentation\" ng-repeat=\"option in unselectedOptions | filter: filterFunc() | filter:search() | limitTo: searchLimit\"\n" +
     "            ng-if=\"!isSelected(option)\"\n" +
     "            ng-class=\"{disabled : selectionLimit && selectedOptions.length >= selectionLimit}\">\n" +
     "            <a class=\"item-unselected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
