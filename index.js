@@ -1,2 +1,3 @@
-require('./dist/angular-bootstrap-multiselect');
+require('./dist/angular-bootstrap-multiselect.js');
 module.exports = 'btorfs.multiselect';
+
