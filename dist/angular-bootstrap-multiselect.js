@@ -44,7 +44,7 @@
                 }
 
                 if ($scope.selectListen) {
-                    $rootScope.$on(`${$scope.selectListen}.update`, handler);
+                    $rootScope.$on($scope.selectListen + '.update', handler);
                 }
 
                 $scope.toggleDropdown = function () {
@@ -119,12 +119,12 @@
                         var totalSelected;
                         totalSelected = angular.isDefined($scope.selectedOptions) ? $scope.selectedOptions.length : 0;
                         if (totalSelected === 0) {
-                            return `כל ה${$scope.selectNamePl} (או לחץ לבחירה)`;
+                            return 'כל ה'+ $scope.selectNamePl + ' (או לחץ לבחירה)';
                         } else {
-                            return totalSelected + ` ${$scope.selectNamePl} ` + 'נבחרו';
+                            return totalSelected + ' ' + $scope.selectNamePl + ' נבחרו';
                         }
                     } else {
-                        return `כל ה${$scope.selectNamePl} (או לחץ לבחירה)`;
+                        return 'כל ה'+ $scope.selectNamePl+ ' (או לחץ לבחירה)';
                     }
                 };
 
@@ -154,7 +154,7 @@
                         $scope.selectedOptions.push(item);
                     }
 
-                    $rootScope.$broadcast(`${$attrs.ngModel}.update`);
+                    $rootScope.$broadcast($attrs.ngModel + '.update');
                 };
 
                 $scope.getId = function (item) {
@@ -257,6 +257,7 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "<div class=\"btn-group\" style=\"width: 100%\">\n" +
     "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
     "        {{getButtonText()}}&nbsp;\n" +
+    "        <i class='fa fa-angle-down'></i>\n" + 
     "    </button>\n" +
     "    <ul class=\"dropdown-menu dropdown-menu-form\"\n" +
     "        ng-style=\"{display: open ? 'block' : 'none'}\" style=\"width: 100%; overflow-x: auto\">\n" +
@@ -298,10 +299,15 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
+    "        <li ng-show=\"showSearch\" class=\"disabled\">\n" +
+    "            <a href=\"\">\n" +
+    "               <i>לתוצאות נוספות חפשו...</i>\n" +
+    "            </a>\n" +
+    "        </li>\n" +
     "\n" +
     "        <li class=\"divider\" ng-show=\"selectionLimit > 1\"></li>\n" +
-    "        <li role=\"presentation\" ng-show=\"selectionLimit > 1\">\n" +
-    "            <a>{{selectedOptions.length || 0}} / {{selectionLimit}} selected</a>\n" +
+    "        <li role=\"presentation\" ng-show=\"selectionLimit > 1\" class=\"disabled\">\n" +
+    "            <a>נבחרו {{selectionLimit}} / {{selectedOptions.length || 0}}</a>\n" +
     "        </li>\n" +
     "\n" +
     "    </ul>\n" +
