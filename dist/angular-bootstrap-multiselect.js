@@ -44,7 +44,7 @@
                 }
 
                 if ($scope.selectListen) {
-                    $rootScope.$on($scope.selectListen + '.update', handler);
+                    $rootScope.$on(`${$scope.selectListen}.update`, handler);
                 }
 
                 $scope.toggleDropdown = function () {
@@ -119,12 +119,12 @@
                         var totalSelected;
                         totalSelected = angular.isDefined($scope.selectedOptions) ? $scope.selectedOptions.length : 0;
                         if (totalSelected === 0) {
-                            return 'כל ה'+ $scope.selectNamePl + ' (או לחץ לבחירה)';
+                            return `כל ה${$scope.selectNamePl} נבחרו`;
                         } else {
-                            return totalSelected + ' ' + $scope.selectNamePl + ' נבחרו';
+                            return totalSelected + ` ${$scope.selectNamePl} ` + 'נבחרו';
                         }
                     } else {
-                        return 'כל ה'+ $scope.selectNamePl+ ' (או לחץ לבחירה)';
+                        return `כל ה${$scope.selectNamePl} נבחרו`;
                     }
                 };
 
@@ -154,7 +154,7 @@
                         $scope.selectedOptions.push(item);
                     }
 
-                    $rootScope.$broadcast($attrs.ngModel + '.update');
+                    $rootScope.$broadcast(`${$attrs.ngModel}.update`);
                 };
 
                 $scope.getId = function (item) {
@@ -255,7 +255,7 @@ angular.module('btorfs.multiselect.templates', ['multiselect.html']);
 angular.module("multiselect.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("multiselect.html",
     "<div class=\"btn-group\" style=\"width: 100%\">\n" +
-    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\">\n" +
+    "    <button type=\"button\" class=\"form-control btn btn-default btn-block dropdown-toggle\" ng-click=\"toggleDropdown()\" ng-disabled=\"disabled\" ng-class=\"{'strong': selectedOptions.length > 0}\">\n" +
     "        {{getButtonText()}}&nbsp;\n" +
     "        <i class='fa fa-angle-down'></i>\n" + 
     "    </button>\n" +
@@ -286,9 +286,9 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "\n" +
     "        <li ng-show=\"showSearch\" class=\"divider search-divider\"></li>\n" +
     "        <li role=\"presentation\" ng-repeat=\"option in selectedOptions\" class=\"active\">\n" +
-    "            <a class=\"item-selected\" href=\"\" ng-click=\"toggleItem(option); $event.stopPropagation()\">\n" +
-    "                <span class=\"fa fa-times-circle\"></span>\n" +
+    "            <a class=\"item-selected\">\n" +
     "                {{getDisplay(option)}}\n" +
+    "                <span class=\"fa fa-times-circle\" ng-click=\"toggleItem(option); $event.stopPropagation()\"></span>\n" +
     "            </a>\n" +
     "        </li>\n" +
     "        <li ng-show=\"selectedOptions.length > 0\" class=\"divider\"></li>\n" +
@@ -299,15 +299,10 @@ angular.module("multiselect.html", []).run(["$templateCache", function($template
     "                {{getDisplay(option)}}\n" +
     "            </a>\n" +
     "        </li>\n" +
-    "        <li ng-show=\"showSearch\" class=\"disabled\">\n" +
-    "            <a href=\"\">\n" +
-    "               <i>לתוצאות נוספות חפשו...</i>\n" +
-    "            </a>\n" +
-    "        </li>\n" +
     "\n" +
     "        <li class=\"divider\" ng-show=\"selectionLimit > 1\"></li>\n" +
-    "        <li role=\"presentation\" ng-show=\"selectionLimit > 1\" class=\"disabled\">\n" +
-    "            <a>נבחרו {{selectionLimit}} / {{selectedOptions.length || 0}}</a>\n" +
+    "        <li role=\"presentation\" ng-show=\"selectionLimit > 1\">\n" +
+    "            <a>{{selectedOptions.length || 0}} / {{selectionLimit}} נבחרו</a>\n" +
     "        </li>\n" +
     "\n" +
     "    </ul>\n" +
