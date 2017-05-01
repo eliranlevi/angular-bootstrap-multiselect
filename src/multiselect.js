@@ -240,6 +240,10 @@
                     }
                 };
 
+                $scope.isReachedLimit = function () {
+                    return $scope.selectionLimit && $scope.selectedOptions.length >= $scope.selectionLimit;
+                };
+
                 $scope.resolvedOptions = [];
                 if (typeof $scope.options !== 'function') {
                     $scope.resolvedOptions = $scope.options;

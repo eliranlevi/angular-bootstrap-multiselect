@@ -18,23 +18,23 @@
         <li ng-show="(showSelectAll || showUnselectAll)"
             class="divider">
         </li>
-        <li ng-show="showSearch">
+        <li ng-show="!isReachedLimit() && showSearch">
             <div class="dropdown-header">
                 <input type="text" class="form-control input-sm" style="width: 100%;"
                 ng-model="searchFilter" placeholder="חפש..." ng-change="updateOptions()"/>
             </div>
         </li>
-        <li ng-show="showSearch" class="divider search-divider"></li>
+        <li ng-show="!isReachedLimit() && showSearch" class="divider search-divider"></li>
         <li role="presentation" ng-repeat="option in selectedOptions" class="active">
             <a class="item-selected">
                 {{getDisplay(option)}}
                 <span class="fa fa-times-circle" ng-click="toggleItem(option); $event.stopPropagation()"></span>
             </a>
         </li>
-        <li ng-show="selectedOptions.length > 0" class="divider"></li>
+        <li ng-show="!isReachedLimit() && selectedOptions.length > 0" class="divider"></li>
         <li role="presentation" ng-repeat="option in unselectedOptions | filter: filterFunc() | filter:search() | limitTo: searchLimit"
             ng-if="!isSelected(option)"
-            ng-class="{disabled : selectionLimit && selectedOptions.length >= selectionLimit}">
+            ng-hide="isReachedLimit()">
             <a class="item-unselected" href="" ng-click="toggleItem(option); $event.stopPropagation()">
                 {{getDisplay(option)}}
             </a>
