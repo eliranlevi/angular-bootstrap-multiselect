@@ -241,7 +241,7 @@
                 };
 
                 $scope.isReachedLimit = function () {
-                    return $scope.selectionLimit && $scope.selectedOptions.length >= $scope.selectionLimit;
+                    return $scope.selectionLimit && $scope.selectedOptions && $scope.selectedOptions.length >= $scope.selectionLimit;
                 };
 
                 $scope.resolvedOptions = [];
