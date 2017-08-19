@@ -27,5 +27,8 @@
   },
   "scripts": {
     "test": "grunt ci"
+  },
+  "dependencies": {
+    "grunt-bump": "^0.8.0"
   }
 }

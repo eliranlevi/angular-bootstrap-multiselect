@@ -54,7 +54,7 @@
                 }
 
                 if ($scope.selectListen) {
-                    $rootScope.$on(`${$scope.selectListen}.update`, handler);
+                    $rootScope.$on($scope.selectListen + '.update', handler);
                 }
 
                 $scope.toggleDropdown = function () {
@@ -129,12 +129,12 @@
                         var totalSelected;
                         totalSelected = angular.isDefined($scope.selectedOptions) ? $scope.selectedOptions.length : 0;
                         if (totalSelected === 0) {
-                            return `כל ה${$scope.selectNamePl} נבחרו`;
+                            return 'כל ה' + $scope.selectNamePl + ' נבחרו';
                         } else {
-                            return totalSelected + ` ${$scope.selectNamePl} ` + 'נבחרו';
+                            return totalSelected + ' ' + $scope.selectNamePl + ' ' + 'נבחרו';
                         }
                     } else {
-                        return `כל ה${$scope.selectNamePl} נבחרו`;
+                        return 'כל ה' + $scope.selectNamePl + ' נבחרו';
                     }
                 };
 
@@ -164,7 +164,7 @@
                         $scope.selectedOptions.push(item);
                     }
 
-                    $rootScope.$broadcast(`${$attrs.ngModel}.update`);
+                    $rootScope.$broadcast($attrs.ngModel + '.update');
                 };
 
                 $scope.getId = function (item) {

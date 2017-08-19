@@ -144,6 +144,9 @@ module.exports = function (grunt) {
     // Build files
     grunt.registerTask('build', ['html2js', 'concat', 'ngAnnotate', 'uglify']);
 
+    // Semi build
+    grunt.registerTask('build-s', ['html2js', 'concat', 'uglify']);
+
     // Continuous integration task
     grunt.registerTask('ci', ['clean', 'check', 'build', 'karma:ci']);
 
