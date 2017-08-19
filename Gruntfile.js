@@ -145,7 +145,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['html2js', 'concat', 'ngAnnotate', 'uglify']);
 
     // Semi build
-    grunt.registerTask('build-s', ['html2js', 'concat', 'uglify']);
+    grunt.registerTask('build-s', ['html2js', 'concat', 'uglify', 'bump']);
 
     // Continuous integration task
     grunt.registerTask('ci', ['clean', 'check', 'build', 'karma:ci']);
@@ -158,4 +158,5 @@ module.exports = function (grunt) {
 
     // Default task: does everything including UI tests
     grunt.registerTask('default', ['clean', 'check', 'build', 'karma:ci', 'e2e']);
+
 };
